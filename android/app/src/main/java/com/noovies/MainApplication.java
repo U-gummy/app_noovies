@@ -1,8 +1,8 @@
 package com.noovies;
-
 import android.app.Application;
 import android.content.res.Configuration;
 import androidx.annotation.NonNull;
+import android.os.Bundle;
 
 import com.facebook.react.PackageList;
 import com.facebook.react.ReactApplication;
