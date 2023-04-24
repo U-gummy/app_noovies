@@ -4,7 +4,7 @@ import * as Font from "expo-font";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { NavigationContainer } from "@react-navigation/native";
 
-import Tabs from "./navigation/Tabs";
+import Root from "./navigation/Root";
 
 export default function App() {
   const [loaded] = Font.useFonts(Ionicons.font);
@@ -15,7 +15,7 @@ export default function App() {
 
   return (
     <NavigationContainer>
-      <Tabs />
+      <Root />
     </NavigationContainer>
   );
 }
