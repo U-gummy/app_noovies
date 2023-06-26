@@ -10,7 +10,6 @@ const Title = styled.Text`
 
 const HMovie = styled.View`
   padding: 0 30px;
-  margin-bottom: 20px;
   flex-direction: row;
 `;
 

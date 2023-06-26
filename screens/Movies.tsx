@@ -2,18 +2,11 @@ import { useEffect, useState } from "react";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import styled from "styled-components/native";
 import Swiper from "react-native-swiper";
-import {
-  ActivityIndicator,
-  Dimensions,
-  RefreshControl,
-  View,
-} from "react-native";
+import { ActivityIndicator, Dimensions, FlatList } from "react-native";
 
 import Slide from "../components/Slide";
 import VerticalMedia from "../components/VerticalMedia";
 import HorizontalMedia from "../components/HorizontalMedia";
-
-const Container = styled.ScrollView``;
 
 const Loader = styled.View`
   flex: 1;
@@ -38,6 +31,14 @@ const TrendingScroll = styled.FlatList`
 
 const ComingTitle = styled(ListTitle)`
   margin-bottom: 20px;
+`;
+
+const VSeparator = styled.View`
+  width: 20px;
+`;
+
+const HSeparator = styled.View`
+  height: 20px;
 `;
 
 const { height: SCREEN_HEIGHT } = Dimensions.get("window");
@@ -97,60 +98,73 @@ const Movies: React.FC<NativeStackScreenProps<any, "Movies">> = ({
     setRefreshing(false);
   };
 
+  const renderVMedia = ({ item }: { item: any }) => (
+    <VerticalMedia movie={item} />
+  );
+
+  const renderHMedia = ({ item }: { item: any }) => (
+    <HorizontalMedia movie={item} />
+  );
+
+  const movieKeyExtractor = (item: any) => String(item.id);
+
   return loading ? (
     <Loader>
       <ActivityIndicator />
     </Loader>
   ) : (
-    <Container
-      refreshControl={
-        <RefreshControl onRefresh={onRefreshing} refreshing={refreshing} />
-      }
-    >
-      <Swiper
-        horizontal
-        loop
-        autoplay
-        autoplayTimeout={4}
-        showsButtons={false}
-        showsPagination={false}
-        containerStyle={{
-          width: "100%",
-          height: SCREEN_HEIGHT / 4,
-          marginBottom: 20,
-        }}
-      >
-        {nowPlaying.map((movie: any) => (
-          <Slide
-            key={movie.id}
-            movie={{
-              backdropPath: movie.backdrop_path,
-              posterPath: movie.poster_path,
-              originalTitle: movie.original_title,
-              overview: movie.overview,
-              voteAverage: movie.voteAverage,
+    <FlatList
+      onRefresh={onRefreshing}
+      refreshing={refreshing}
+      ListHeaderComponent={
+        <>
+          <Swiper
+            horizontal
+            loop
+            autoplay
+            autoplayTimeout={4}
+            showsButtons={false}
+            showsPagination={false}
+            containerStyle={{
+              width: "100%",
+              height: SCREEN_HEIGHT / 4,
+              marginBottom: 20,
             }}
-          />
-        ))}
-      </Swiper>
+          >
+            {nowPlaying.map((movie: any) => (
+              <Slide
+                key={movie.id}
+                movie={{
+                  backdropPath: movie.backdrop_path,
+                  posterPath: movie.poster_path,
+                  originalTitle: movie.original_title,
+                  overview: movie.overview,
+                  voteAverage: movie.voteAverage,
+                }}
+              />
+            ))}
+          </Swiper>
 
-      <ListContainer>
-        <ListTitle>Trending Movies</ListTitle>
-        <TrendingScroll
-          data={trending}
-          horizontal
-          keyExtractor={(item: any) => String(item.id)}
-          contentContainerStyle={{ paddingHorizontal: 20 }}
-          ItemSeparatorComponent={() => <View style={{ width: 20 }}></View>}
-          showsHorizontalScrollIndicator={false}
-          renderItem={({ item }) => <VerticalMedia movie={item} />}
-        />
-      </ListContainer>
-      <ComingTitle>Coming soon</ComingTitle>
-      {upcoming.map((movie: any) => (
-        <HorizontalMedia movie={movie} key={movie.id} />
-      ))}
-    </Container>
+          <ListContainer>
+            <ListTitle>Trending Movies</ListTitle>
+            <TrendingScroll
+              data={trending}
+              horizontal
+              keyExtractor={movieKeyExtractor}
+              contentContainerStyle={{ paddingHorizontal: 20 }}
+              ItemSeparatorComponent={VSeparator}
+              showsHorizontalScrollIndicator={false}
+              renderItem={renderVMedia}
+            />
+          </ListContainer>
+          <ComingTitle>Coming soon</ComingTitle>
+        </>
+      }
+      data={upcoming}
+      keyExtractor={movieKeyExtractor}
+      ItemSeparatorComponent={HSeparator}
+      renderItem={renderHMedia}
+    />
   );
 };
 export default Movies;
