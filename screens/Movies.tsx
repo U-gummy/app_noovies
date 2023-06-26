@@ -3,7 +3,7 @@ import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import styled from "styled-components/native";
 import Swiper from "react-native-swiper";
 import { ActivityIndicator, Dimensions, FlatList } from "react-native";
-import { useQuery } from "react-query";
+import { useQuery, useQueryClient } from "react-query";
 
 import Slide from "../components/Slide";
 import VerticalMedia from "../components/VerticalMedia";
@@ -48,20 +48,26 @@ const { height: SCREEN_HEIGHT } = Dimensions.get("window");
 const Movies: React.FC<NativeStackScreenProps<any, "Movies">> = ({
   navigation: { navigate },
 }) => {
-  const [refreshing, setRefreshing] = useState(false);
-  const { isLoading: nowPlayingLoading, data: nowPlayingData } = useQuery(
-    "nowPlaying",
-    moviesApi.nowPlaying
-  );
-  const { isLoading: upcomingLoading, data: upcomingData } = useQuery(
-    "upcoming",
-    moviesApi.upcoming
-  );
-  const { isLoading: trendingLoading, data: trendingData } = useQuery(
-    "trending",
-    moviesApi.trending
-  );
-  const onRefreshing = async () => {};
+  const queryClient = useQueryClient();
+  const {
+    isLoading: nowPlayingLoading,
+    data: nowPlayingData,
+    isRefetching: isRefetchNowPlaying,
+  } = useQuery(["movies", "nowPlaying"], moviesApi.nowPlaying);
+  const {
+    isLoading: upcomingLoading,
+    data: upcomingData,
+    isRefetching: isRefetchUpcoming,
+  } = useQuery(["movies", "upcoming"], moviesApi.upcoming);
+  const {
+    isLoading: trendingLoading,
+    data: trendingData,
+    isRefetching: isRefetchTrending,
+  } = useQuery(["movies", "trending"], moviesApi.trending);
+
+  const onRefreshing = () => {
+    queryClient.refetchQueries(["movies"]);
+  };
 
   const renderVMedia = ({ item }: { item: any }) => (
     <VerticalMedia movie={item} />
@@ -73,6 +79,8 @@ const Movies: React.FC<NativeStackScreenProps<any, "Movies">> = ({
 
   const movieKeyExtractor = (item: any) => String(item.id);
   const loading = nowPlayingLoading || upcomingLoading || trendingLoading;
+  const refreshing =
+    isRefetchNowPlaying || isRefetchUpcoming || isRefetchTrending;
   return loading ? (
     <Loader>
       <ActivityIndicator />
