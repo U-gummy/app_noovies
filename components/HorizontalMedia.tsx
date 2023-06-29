@@ -1,5 +1,7 @@
 import styled from "styled-components/native";
+
 import Poster from "./Poster";
+import { Movie } from "../api";
 
 const Title = styled.Text`
   font-size: 12px;
@@ -30,13 +32,13 @@ const Release = styled.Text`
   color: rgba(255, 255, 255, 0.8);
 `;
 interface Props {
-  movie: any;
+  movie: Movie;
 }
 
 const HorizontalMedia: React.FC<Props> = ({ movie }) => {
   return (
     <HMovie>
-      <Poster path={movie.poster_path} />
+      <Poster path={movie.poster_path || ""} />
       <HColumn>
         <Title>{movie.original_title}</Title>
         <Release>
