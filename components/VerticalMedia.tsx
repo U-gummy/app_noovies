@@ -15,18 +15,24 @@ const Title = styled.Text`
 `;
 
 interface Props {
-  movie: any;
+  posterPath: string;
+  originalTitle: string;
+  voteAverage: number;
 }
 
-const VerticalMedia: React.FC<Props> = ({ movie }) => {
+const VerticalMedia: React.FC<Props> = ({
+  posterPath,
+  originalTitle,
+  voteAverage,
+}: Props) => {
   return (
     <Movie>
-      <Poster path={movie.poster_path} />
+      <Poster path={posterPath} />
       <Title>
-        {movie.original_title.slice(0, 13)}
-        {movie.original_title.length > 13 && "..."}
+        {originalTitle.slice(0, 13)}
+        {originalTitle.length > 13 && "..."}
       </Title>
-      <Votes vote={movie.vote_average} />
+      <Votes vote={voteAverage} />
     </Movie>
   );
 };

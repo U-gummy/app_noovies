@@ -8,12 +8,8 @@ import Slide from "../components/Slide";
 import VerticalMedia from "../components/VerticalMedia";
 import HorizontalMedia from "../components/HorizontalMedia";
 import { Movie, MovieResponse, moviesApi } from "../api";
-
-const Loader = styled.View`
-  flex: 1;
-  justify-content: center;
-  align-items: center;
-`;
+import Loader from "../components/Loader";
+import HorizontalList from "../components/HorizontalList";
 
 const ListTitle = styled.Text`
   font-size: 18px;
@@ -72,9 +68,7 @@ const Movies: React.FC<NativeStackScreenProps<any, "Movies">> = ({
   const refreshing =
     isRefetchNowPlaying || isRefetchUpcoming || isRefetchTrending;
   return loading ? (
-    <Loader>
-      <ActivityIndicator />
-    </Loader>
+    <Loader />
   ) : (
     upcomingData && (
       <FlatList
@@ -108,21 +102,12 @@ const Movies: React.FC<NativeStackScreenProps<any, "Movies">> = ({
                 />
               ))}
             </Swiper>
-
-            <ListContainer>
-              <ListTitle>Trending Movies</ListTitle>
-              {trendingData && (
-                <TrendingScroll
-                  data={trendingData.results}
-                  horizontal
-                  keyExtractor={(item) => item.id + ""}
-                  contentContainerStyle={{ paddingHorizontal: 20 }}
-                  ItemSeparatorComponent={VSeparator}
-                  showsHorizontalScrollIndicator={false}
-                  renderItem={({ item }) => <VerticalMedia movie={item} />}
-                />
-              )}
-            </ListContainer>
+            {trendingData && (
+              <HorizontalList
+                title="Trending Movies"
+                data={trendingData.results}
+              />
+            )}
             <ComingTitle>Coming soon</ComingTitle>
           </>
         }
