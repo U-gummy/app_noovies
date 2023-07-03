@@ -2,6 +2,7 @@ import { FlatList } from "react-native";
 import styled from "styled-components/native";
 
 import VerticalMedia from "../components/VerticalMedia";
+import { Movie } from "../api";
 const ListTitle = styled.Text`
   font-size: 18px;
   font-weight: 600;
@@ -20,7 +21,7 @@ export const HorizontalSeparator = styled.View`
 
 interface Props {
   title: string;
-  data: any[];
+  data: Movie[];
 }
 
 const HorizontalList: React.FC<Props> = ({ title, data }) => {
@@ -30,7 +31,7 @@ const HorizontalList: React.FC<Props> = ({ title, data }) => {
       <FlatList
         data={data}
         horizontal
-        keyExtractor={(item) => item.id}
+        keyExtractor={(item) => String(item.id)}
         showsHorizontalScrollIndicator={false}
         ItemSeparatorComponent={HorizontalSeparator}
         contentContainerStyle={{ paddingHorizontal: 30 }}

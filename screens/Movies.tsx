@@ -1,15 +1,15 @@
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import styled from "styled-components/native";
 import Swiper from "react-native-swiper";
-import { ActivityIndicator, Dimensions, FlatList } from "react-native";
+import { Dimensions, FlatList } from "react-native";
 import { useQuery, useQueryClient } from "react-query";
 
 import Slide from "../components/Slide";
-import VerticalMedia from "../components/VerticalMedia";
 import HorizontalMedia from "../components/HorizontalMedia";
 import { Movie, MovieResponse, moviesApi } from "../api";
 import Loader from "../components/Loader";
 import HorizontalList from "../components/HorizontalList";
+import { useState } from "react";
 
 const ListTitle = styled.Text`
   font-size: 18px;
@@ -18,20 +18,8 @@ const ListTitle = styled.Text`
   padding: 0 20px;
 `;
 
-const ListContainer = styled.View`
-  margin-bottom: 40px;
-`;
-
-const TrendingScroll = styled.FlatList`
-  margin-top: 20px;
-`;
-
 const ComingTitle = styled(ListTitle)`
   margin-bottom: 20px;
-`;
-
-const VSeparator = styled.View`
-  width: 20px;
 `;
 
 const HSeparator = styled.View`
@@ -39,34 +27,24 @@ const HSeparator = styled.View`
 `;
 
 const { height: SCREEN_HEIGHT } = Dimensions.get("window");
-
-const Movies: React.FC<NativeStackScreenProps<any, "Movies">> = ({
-  navigation: { navigate },
-}) => {
+const Movies: React.FC<NativeStackScreenProps<any, "Movies">> = () => {
   const queryClient = useQueryClient();
-  const {
-    isLoading: nowPlayingLoading,
-    data: nowPlayingData,
-    isRefetching: isRefetchNowPlaying,
-  } = useQuery<MovieResponse>(["movies", "nowPlaying"], moviesApi.nowPlaying);
-  const {
-    isLoading: upcomingLoading,
-    data: upcomingData,
-    isRefetching: isRefetchUpcoming,
-  } = useQuery<MovieResponse>(["movies", "upcoming"], moviesApi.upcoming);
-  const {
-    isLoading: trendingLoading,
-    data: trendingData,
-    isRefetching: isRefetchTrending,
-  } = useQuery<MovieResponse>(["movies", "trending"], moviesApi.trending);
+  const [refreshing, setRefreshing] = useState(false);
+  const { isLoading: nowPlayingLoading, data: nowPlayingData } =
+    useQuery<MovieResponse>(["movies", "nowPlaying"], moviesApi.nowPlaying);
+  const { isLoading: upcomingLoading, data: upcomingData } =
+    useQuery<MovieResponse>(["movies", "upcoming"], moviesApi.upcoming);
+  const { isLoading: trendingLoading, data: trendingData } =
+    useQuery<MovieResponse>(["movies", "trending"], moviesApi.trending);
 
-  const onRefreshing = () => {
-    queryClient.refetchQueries(["movies"]);
+  const onRefreshing = async () => {
+    setRefreshing(true);
+    await queryClient.refetchQueries(["movies"]);
+    setRefreshing(false);
   };
 
   const loading = nowPlayingLoading || upcomingLoading || trendingLoading;
-  const refreshing =
-    isRefetchNowPlaying || isRefetchUpcoming || isRefetchTrending;
+
   return loading ? (
     <Loader />
   ) : (
