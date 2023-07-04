@@ -1,7 +1,9 @@
 import styled from "styled-components/native";
+import { TouchableOpacity } from "react-native";
 
 import Poster from "./Poster";
 import { Movie } from "../api";
+import { useNavigation } from "@react-navigation/native";
 
 const Title = styled.Text`
   font-size: 12px;
@@ -36,20 +38,26 @@ interface Props {
 }
 
 const HorizontalMedia: React.FC<Props> = ({ movie }) => {
+  const navigation = useNavigation();
+  const goToDetail = () => {
+    navigation.navigate("Stack", { screen: "Detail" });
+  };
   return (
-    <HMovie>
-      <Poster path={movie.poster_path || ""} />
-      <HColumn>
-        <Title>{movie.original_title}</Title>
-        <Release>
-          {new Date(movie.release_date).toLocaleDateString("ko")}
-        </Release>
-        <Overview>
-          {movie.overview.slice(0, 120)}
-          {movie.overview.length > 120 && "..."}
-        </Overview>
-      </HColumn>
-    </HMovie>
+    <TouchableOpacity onPress={goToDetail}>
+      <HMovie>
+        <Poster path={movie.poster_path || ""} />
+        <HColumn>
+          <Title>{movie.original_title}</Title>
+          <Release>
+            {new Date(movie.release_date).toLocaleDateString("ko")}
+          </Release>
+          <Overview>
+            {movie.overview.slice(0, 120)}
+            {movie.overview.length > 120 && "..."}
+          </Overview>
+        </HColumn>
+      </HMovie>
+    </TouchableOpacity>
   );
 };
 

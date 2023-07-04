@@ -3,11 +3,13 @@ import { useQuery } from "react-query";
 import styled from "styled-components/native";
 
 import { moviesApi, tvApi } from "../api";
+import Loader from "../components/Loader";
+import HorizontalList from "../components/HorizontalList";
 
 const Container = styled.View``;
 const SearchBar = styled.TextInput`
   width: 90%;
-  margin: 10px auto;
+  margin: 10px auto 50px;
   padding: 10px 15px;
   border-radius: 20px;
   background-color: #fff;
@@ -50,6 +52,11 @@ const Search = () => {
         onChangeText={onChangeText}
         onSubmitEditing={onSubmit}
       />
+      {moviesLoading || (tvLoading && <Loader />)}
+      {moviesDate && (
+        <HorizontalList title="Movies Results" data={moviesDate.results} />
+      )}
+      {tvDate && <HorizontalList title="TV Results" data={tvDate.results} />}
     </Container>
   );
 };

@@ -1,6 +1,11 @@
 import styled from "styled-components/native";
-import { StyleSheet, useColorScheme } from "react-native";
+import {
+  StyleSheet,
+  TouchableWithoutFeedback,
+  useColorScheme,
+} from "react-native";
 import { BlurView } from "@react-native-community/blur";
+import { useNavigation } from "@react-navigation/native";
 
 import { makeImagePath } from "../utils";
 import Poster from "./Poster";
@@ -56,29 +61,35 @@ const Slide: React.FC<Props> = ({ movie }) => {
   const { backdropPath, posterPath, originalTitle, overview, voteAverage } =
     movie;
 
+  const navigation = useNavigation();
+  const goToDetail = () => {
+    navigation.navigate("Stack", { screen: "Detail" });
+  };
   return (
-    <Item>
-      <BackgroundImage
-        source={{ uri: makeImagePath(backdropPath) }}
-        style={StyleSheet.absoluteFill}
-      />
-      <BlurView
-        blurAmount={2}
-        style={StyleSheet.absoluteFill}
-        blurType={isDark ? "dark" : "light"}
-      >
-        <Wrapper>
-          <Poster path={posterPath} />
-          <Column>
-            <Title isDark={isDark}>{originalTitle}</Title>
-            <Overview isDark={isDark}>{overview.slice(0, 50)}...</Overview>
-            {voteAverage > 0 && (
-              <Votes isDark={isDark}> ⭐️ {voteAverage} / 10</Votes>
-            )}
-          </Column>
-        </Wrapper>
-      </BlurView>
-    </Item>
+    <TouchableWithoutFeedback onPress={goToDetail}>
+      <Item>
+        <BackgroundImage
+          source={{ uri: makeImagePath(backdropPath) }}
+          style={StyleSheet.absoluteFill}
+        />
+        <BlurView
+          blurAmount={2}
+          style={StyleSheet.absoluteFill}
+          blurType={isDark ? "dark" : "light"}
+        >
+          <Wrapper>
+            <Poster path={posterPath} />
+            <Column>
+              <Title isDark={isDark}>{originalTitle}</Title>
+              <Overview isDark={isDark}>{overview.slice(0, 50)}...</Overview>
+              {voteAverage > 0 && (
+                <Votes isDark={isDark}> ⭐️ {voteAverage} / 10</Votes>
+              )}
+            </Column>
+          </Wrapper>
+        </BlurView>
+      </Item>
+    </TouchableWithoutFeedback>
   );
 };
 export default Slide;
