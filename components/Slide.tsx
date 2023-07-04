@@ -9,6 +9,7 @@ import { useNavigation } from "@react-navigation/native";
 
 import { makeImagePath } from "../utils";
 import Poster from "./Poster";
+import { Movie } from "../api";
 
 const Item = styled.View`
   flex: 1;
@@ -53,9 +54,10 @@ interface Props {
     overview: string;
     voteAverage: number;
   };
+  fullData: Movie;
 }
 
-const Slide: React.FC<Props> = ({ movie }) => {
+const Slide: React.FC<Props> = ({ movie, fullData }) => {
   const isDark = useColorScheme() === "dark";
 
   const { backdropPath, posterPath, originalTitle, overview, voteAverage } =
@@ -63,7 +65,10 @@ const Slide: React.FC<Props> = ({ movie }) => {
 
   const navigation = useNavigation();
   const goToDetail = () => {
-    navigation.navigate("Stack", { screen: "Detail" });
+    navigation.navigate("Stack", {
+      screen: "Detail",
+      params: { ...fullData },
+    });
   };
   return (
     <TouchableWithoutFeedback onPress={goToDetail}>

@@ -40,7 +40,10 @@ interface Props {
 const HorizontalMedia: React.FC<Props> = ({ movie }) => {
   const navigation = useNavigation();
   const goToDetail = () => {
-    navigation.navigate("Stack", { screen: "Detail" });
+    navigation.navigate("Stack", {
+      screen: "Detail",
+      params: { ...movie },
+    });
   };
   return (
     <TouchableOpacity onPress={goToDetail}>

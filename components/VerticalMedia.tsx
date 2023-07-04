@@ -5,8 +5,9 @@ import Poster from "./Poster";
 
 import Votes from "../screens/Votes";
 import { useNavigation } from "@react-navigation/native";
+import { Movie } from "../api";
 
-const Movie = styled.View`
+const Container = styled.View`
   align-items: center;
 `;
 
@@ -21,28 +22,33 @@ interface Props {
   posterPath: string;
   originalTitle: string;
   voteAverage: number;
+  fullData: Movie;
 }
 
 const VerticalMedia: React.FC<Props> = ({
   posterPath,
   originalTitle,
   voteAverage,
+  fullData,
 }: Props) => {
   const navigation = useNavigation();
   const goToDetail = () => {
-    navigation.navigate("Stack", { screen: "Detail" });
+    navigation.navigate("Stack", {
+      screen: "Detail",
+      params: { ...fullData },
+    });
   };
 
   return (
     <TouchableOpacity onPress={goToDetail}>
-      <Movie>
+      <Container>
         <Poster path={posterPath} />
         <Title>
           {originalTitle.slice(0, 13)}
           {originalTitle.length > 13 && "..."}
         </Title>
         <Votes vote={voteAverage} />
-      </Movie>
+      </Container>
     </TouchableOpacity>
   );
 };
