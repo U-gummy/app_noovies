@@ -1,6 +1,13 @@
 import { useEffect } from "react";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { Dimensions, Linking, StyleSheet } from "react-native";
+import {
+  Dimensions,
+  Linking,
+  StyleSheet,
+  TouchableOpacity,
+  Share,
+  Platform,
+} from "react-native";
 import styled from "styled-components/native";
 import { LinearGradient } from "expo-linear-gradient";
 import { Ionicons } from "@expo/vector-icons";
@@ -73,14 +80,50 @@ const Detail: React.FC<DetailScreenProps> = ({
     { enabled: isMovie }
   );
 
+  const shareMedia = async () => {
+    const isAndroid = Platform.OS === "android";
+    const homepage = isMovie
+      ? `https://www.imdb.com/title/${data.imdb_id}`
+      : data.homepage;
+
+    if (isAndroid) {
+      await Share.share({
+        message: `${params.overview}\nCheck it out: ${homepage}`,
+        title,
+      });
+    } else {
+      await Share.share({
+        url: homepage,
+        title,
+      });
+    }
+  };
+
+  const ShareButton = () => (
+    <TouchableOpacity onPress={shareMedia}>
+      <Ionicons name="share-outline" color="white" size={24} />
+    </TouchableOpacity>
+  );
+
   const openYoutubeLink = async (videoId: string) => {
     const baseUrl = `https://m.youtube.com/watch?v=${videoId}`;
     // await Linking.openURL(baseUrl);
     await WebBrowser.openBrowserAsync(baseUrl);
   };
+
   useEffect(() => {
-    setOptions({ title: isMovie ? "Movie" : "TV Show" });
+    setOptions({
+      title: isMovie ? "Movie" : "TV Show",
+    });
   }, []);
+
+  useEffect(() => {
+    if (data) {
+      setOptions({
+        headerRight: () => <ShareButton />,
+      });
+    }
+  }, [data]);
   return (
     <Container>
       <Header>
